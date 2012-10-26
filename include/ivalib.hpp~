@@ -1,0 +1,13 @@
+#ifndef IVALIB_HPP
+#define IVALIB_HPP
+
+/* -*- mode: C++ ; c-file-style: "stroustrup" -*- *****************************
+ * Include file for all ivalib modules 
+ * Copyright (C) 2012   Matias Perez
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the LGPL
+ ******************************************************************************/
+
+#include "IVALib/plotterwindow/PlotterWindow.hpp"
+

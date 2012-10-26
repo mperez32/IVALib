@@ -1,0 +1,101 @@
+#------------------------------------------------------------
+#Macros and functions to define differet modules in 
+#IVALibs
+#
+#Local variables set for each module:
+# 
+#    name : this is the module name e.g. ac
+#    the_module : full name of the module e.g. ivalib_ac
+
+#Global variables:
+#
+#    IVALIB_MODULE_${the_module}_LOCATION
+#    IVALIB_MODULE_${the_module}_DESCRIPTION
+#    IVALIB_MODULE_${the_module}_HEADERS
+#    IVALIB_MODULE_${the_module}_SOURCE
+#    IVALIB_MODULE_${the_module}_DEPS -final flatten set of module dependencies
+#    IVALIB_MODULE_${the_module}_REQ_DEPS
+#    IVALIB_MODULE_${the_module}_OPT_DEPS
+#    HAVE_{the_module}
+    
+
+#------------------------------------------------------------
+
+# clean flags for modules enabled on previous cmake run
+# this is necessary to correctly handle modules removal
+foreach(mod ${IVALIB_MODULES_BUILD} ${IVALIB_MODULES_DISABLED_USER} ${IVALIB_MODULES_DISABLED_AUTO} ${IVALIB_MODULES_DISABLED_FORCE})
+  if(HAVE_${mod})
+    unset(HAVE_${mod} CACHE)
+  endif()
+  unset(IVALIB_MODULE_${mod}_REQ_DEPS CACHE)
+  unset(IVALIB_MODULE_${mod}_OPT_DEPS CACHE)
+endforeach()
+
+# clean modules info which needs to be recalculated
+set(IVALIB_MODULES_PUBLIC         "" CACHE INTERNAL "List of OpenCV modules marked for export")
+set(IVALIB_MODULES_BUILD          "" CACHE INTERNAL "List of OpenCV modules included into the build")
+set(IVALIB_MODULES_DISABLED_USER  "" CACHE INTERNAL "List of OpenCV modules explicitly disabled by user")
+set(IVALIB_MODULES_DISABLED_AUTO  "" CACHE INTERNAL "List of OpenCV modules implicitly disabled due to dependencies")
+set(IVALIB_MODULES_DISABLED_FORCE "" CACHE INTERNAL "List of OpenCV modules which can not be build in current configuration")
+
+
+
+#Macro used to add dependencies
+#Usage:
+#   iva_add_dependencies(the_module [REQUIRED] [<list of required dependencies>] [OPTIONAL <list of optional dependencies>])
+macro(iva_add_dependencies full_modname)
+  #don't clean any list here so macro can be used multiple times
+  foreach(d "REQUIRED" ${ARGN})
+    if(d STREQUAL "REQUIRED")
+      set(__depsvar IVA_MODULE_${full_modname}_REQ_DEPS)
+    elseif(d STREQUAL "OPTIONAL")
+      set(__depsvar IVA_MODULE_${full_modname}_OPT_DEPS)
+    else()
+      list(APPEND ${__depsvar} "${d}")
+    endif()
+  endforeach()
+  unset(__depsvar)
+
+  iva_list_unique(IVA_MODULE_${full_modname}_REQ_DEPS)
+  iva_list_unique(IVA_MODULE_${full_modname}_REQ_DEPS)
+
+  set(IVA_MODULE_${full_modname}_REQ_DEPS ${IVA_MODULE_${full_modname}_REQ_DEPS} CACHE INTERNAL "Required dependencis of 
+${full_modname} module") 
+  set(IVA_MODULE_${full_modname}_OPT_DEPS ${IVA_MODULE_${full_modname}_OPT_DEPS} CACHE INTERNAL "Optional dependencis of 
+${full_modname} module") 
+endmacro()
+
+# Declares a new IVALib Module in current direcrtory
+# Usage:
+#   iva_add_module(<name> [INTERNAL|BINDING] [REQUIRED] [<list of dependencies>] [OPTIONAL <list of dependencies>)
+macro(iva_add_module _name)
+  string(TOLOWER _name name)
+  string(REGEX REPLACE "^opencv_" "" ${name} "${name}")
+  set(the_module ivalib_${name})
+
+  #the first pass collects info the second past builds
+  if(IVALIB_INIT_PASS)
+    #check to see 
+    if(";${IVALIB_MODULES_BUILD};${IVALIB_MODULES_DISABLED_USER};" MATCHES ";${the_module};")
+      message(FATAL_ERROR "Redefinition of the ${the_module} module.
+  at:                    ${CMAKE_CURRENT_SOURCE_DIR}
+  previously defined at: ${IVALIB_MODULE_${the_module}_LOCATION}
+")
+    endif()
+    
+    if(NOT DEFINED the_description)
+      set(the_description "The ${name} OpenCV module")
+    endif()
+
+    if(NOT DEFINED BUILD_${the_module}_INIT)
+      set(BUILD_${the_module}_INIT ON)
+    endif()
+    
+    # create option to enable/disable this module
+    option(BUILD_${the_module} "Include ${the_module} module into the OpenCV build" ${BUILD_${the_module}_INIT})
+    
+    # remember the module details
+    set(IVALIB_MODULE_${the_module}_DESCRIPTION "${the_description}" CACHE INTERNAL "Brief description of ${the_module} module")
+    set(IVALIB_MODULE_${the_module}_LOCATION    "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Location of ${the_module} module sources")
+
+    

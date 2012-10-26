@@ -1,0 +1,46 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<iostream>
+#include<math.h>
+#include"IVALib/ivalib.hpp"
+#include"IVALIB/ActiveSurfaces/ChanVese.hpp"
+#include"IVALIB/ActiveSurfaces/Bhattacharyya.hpp"
+#include"opencv2/imgproc/imgproc.hpp"
+#include<opencv2/highgui/highgui.hpp>
+
+
+using namespace std;
+using namespace cv;
+
+typedef vector<SFM_point<double> > llist;
+
+int main(int argc, char **argv){
+
+  //declare and initialize the variables that will be used
+  vector<SFM_point<double> > L0;
+  Mat _Img = imread("zebra3.jpg",-1);
+  resize(_Img,_Img,Size(300,300));
+  Mat_<double> Ball(_Img.size());
+  Mat_<Vec3b> Img(_Img.clone());
+  functor<double> *KForce = new Bhattacharyya(_Img);//Initialize the functor
+  
+  //create the circle label map for initilization
+  for(int row = 0; row < _Img.rows;row++){
+    for(int collum = 0; collum < _Img.cols;collum++){
+      
+      double x  = (double)row -_Img.rows/2 -35;
+      double y  = (double)collum -_Img.cols/2 + 20;
+      double dist  = sqrt(pow(x,2) + pow(y,2));
+      if(dist < min(_Img.rows,_Img.cols)/4)
+	Ball(row,collum) = 1;
+      else
+	Ball(row,collum) = 0;
+    }//end row for loop
+  }//end collum for loop
+
+  SFM<double> sfm_test(Ball,KForce);
+  sfm_test.Initialize();
+  L0 = sfm_test.getLz();
+  
+  
+}

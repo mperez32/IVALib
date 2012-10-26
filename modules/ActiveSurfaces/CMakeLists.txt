@@ -1,0 +1,6 @@
+set(the_description "Active Contour Module used in order to implement different active contours")
+iva_add_module(ActiveSurfaces ${CORE_LIBRARIES} ${VTK_REQUIRED_LIBS}  ivalib_plotter ivalib_threed)
+iva_module_include_directories(${CORE_INCLUDE_DIRECTORIES} ivalib_plotter ivalib_utils ivalib_threed)
+iva_include_directories(${PLOTTER_INCLUDE_DIRS})
+iva_glob_module_sources()
+iva_create_module() 

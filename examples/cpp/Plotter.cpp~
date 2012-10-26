@@ -1,0 +1,26 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<iostream>
+#include<math.h>
+#include"IVALib/ivalib.hpp"
+
+using namespace std;
+using namespace cv;
+
+int main(int argc, char **argv){
+
+  //Plot some stuff
+  arma::vec x = arma::linspace<arma::vec>(-4,4,256);
+  arma::vec normal = exp(-(square(x)/5));
+  //Must always be called before using PlotterWindow
+  Gtk::Main main(argc,argv);
+  PlotterWindow plot;
+  //Add curve to the PlotterWindow plot
+  plot.add_Curve(x,normal);
+  //Set the title of the plot
+  plot.set_Title("Test Hello World");
+  //The program will continue to run but the window will be shown
+  plot.show();
+  //The program will continue rinnung once the window has been closed
+  plot.run(argc,argv);
+  //Label the x and y axis

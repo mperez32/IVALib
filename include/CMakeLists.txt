@@ -1,0 +1,3 @@
+install(FILES "./ivalib.hpp"
+    DESTINATION ${IVALIB_INCLUDE_INSTALL_PATH}
+    COMPONENT main)

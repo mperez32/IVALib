@@ -1,0 +1,5 @@
+set(the_description "Plotter Module used to vissualize different data")
+iva_add_module(ActiveSurfaces ${PLOTTER_LIBRARIES)
+iva_module_include_directories(${PLOTTER_INCLUDE_DIRECTORIES})
+iva_glob_module_sources()
+iva_create_module() 

@@ -1,0 +1,9 @@
+
+--This line, and those below, will be ignored--
+
+M    include/SFM3D.hpp
+M    include/ChanVese.hpp
+M    include/Kappa.hpp
+M    include/functor.hpp
+M    include/Bhattacharyya.hpp
+M    include/SFM.hpp

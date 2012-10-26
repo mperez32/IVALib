@@ -1,0 +1,6 @@
+set(the_description "Utils modules holds various inline functions that are used for basic procedures")
+iva_add_module(Utils ${CORE_LIBRARIES} )
+iva_module_include_directories(${CORE_INCLUDE_DIRECTORIES})
+iva_include_directories(${PLOTTER_INCLUDE_DIRS})
+iva_glob_module_sources()
+iva_create_module()

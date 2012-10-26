@@ -1,0 +1,19 @@
+
+--This line, and those below, will be ignored--
+
+A    ActiveSurfaces/include
+A    ActiveSurfaces/include/functor.hpp
+A    ActiveSurfaces/include/Bhattacharyya.hpp
+A    ActiveSurfaces/include/SFM.hpp
+A    ActiveSurfaces/include/ChanVese.hpp
+A    ActiveSurfaces/include/SFM3D.hpp
+A    ActiveSurfaces/include/Kappa.hpp
+A    ActiveSurfaces/include/SFM_point.hpp
+A    ActiveSurfaces/src
+A    ActiveSurfaces/src/Bhattacharyya.cpp
+A    ActiveSurfaces/src/SFM.cpp
+A    ActiveSurfaces/src/Kappa.cpp
+A    ActiveSurfaces/src/ChanVese.cpp
+A    ActiveSurfaces/src/SFM_point.cpp
+A    ActiveSurfaces/src/functor.cpp
+A    ActiveSurfaces/CMakeLists.txt

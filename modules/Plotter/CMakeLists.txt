@@ -1,0 +1,8 @@
+set(the_description "Plotter Module used to vissualize different data")
+MESSAGE("This is VTK_REQUIRED_LIBS : " ${VTK_REQUIRED_LIBS})
+iva_add_module(Plotter ${PLOTTER_LIBRARIES} ${VTK_REQUIRED_LIBS} )
+iva_module_include_directories(${PLOTTER_INCLUDE_DIRS} ivalib_utils)
+#iva_include_directories(${PLOTTER_INCLUDE_DIRS})
+#LINK_DIRECTORIES(${PLOTTER_LIBRARY_DIRS})
+iva_glob_module_sources()
+iva_create_module() 

@@ -1,0 +1,18 @@
+# ----------------------------------------------------------------------------
+#  CMake file for C examples. See root CMakeLists.txt
+#
+# ----------------------------------------------------------------------------
+
+SET(IVALIB_CPP_EXAMPLES_REQUIRED_DEPS plotter activesurfaces)
+
+
+iva_check_dependencies(${IVALIB_CPP_EXAMPLES_REQUIRED_DEPS})
+
+
+if(BUILD_EXAMPLES AND IVALIB_DEPENDENCIES_FOUND)
+  project(cpp_samples)
+
+  ocv_include_modules(${IVALIB_CPP_SAMPLES_REQUIRED_DEPS})
+  
+
+

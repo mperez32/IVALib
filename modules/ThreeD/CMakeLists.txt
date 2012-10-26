@@ -1,0 +1,6 @@
+set(the_description "ThreeD Module used to modeled 3D objects and cameras")
+iva_add_module(ThreeD ${CORE_LIBRARIES} ${VTK_REQUIRED_LIBS}  ivalib_plotter)
+iva_module_include_directories(${CORE_INCLUDE_DIRECTORIES} ivalib_plotter ivalib_utils)
+iva_include_directories(${PLOTTER_INCLUDE_DIRS})
+iva_glob_module_sources()
+iva_create_module() 
