@@ -178,7 +178,7 @@ inline void Reconstruct3d::computeEnergy(Camera &cam){
 	    ener = ener - 1.0/2*((means_in[0]- means_out[0])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])) + (means_in[1]- means_out[1])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1])));
       }else if(Img.channels() == 3){
 	for(point2d; point2d < list.end();point2d++)
-	    ener = ener - 1.0/3*((means_in[0]- means_out[0])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])) + (means_in[1]- means_out[1])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1])) + (means_in[2]- means_out[2])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[2]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[2])));
+	    ener = ener - ((means_in[0]- means_out[0])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])) + (means_in[1]- means_out[1])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1])) + (means_in[2]- means_out[2])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[2]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[2])));
       }else{
 	throw runtime_error("Sorry the Reconstruction functional does not take more than three channel images");
       }

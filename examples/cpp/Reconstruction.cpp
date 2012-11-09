@@ -125,30 +125,24 @@ int main(int argc, char **argv){
     Mat test = Mat::zeros(Img.size(),CV_8UC3);
 
     //destroyAllWindows();
-    functor<double> *Force = new Reconstruct3d(Cameras,labelMap,0.001);
+    functor<double> *Force = new Reconstruct3d(Cameras,labelMap,0.01);
     SFM3D<double> sfm_test(labelMap,Force);
     sfm_test.Initialize();
     int count =0;
     Cameras.clear();
     //iterate the surface  
-    while(count < 400){
-	sfm_test.Update();
-	count++;
-	cout<<"Update Complete count is : "<<count <<endl;
-    }
-
-    count = 0;
 
     while(count < 1000){
 	sfm_test.Update();
-	if(count % 40 == 0){
-	    //iterate the camera parameters	    
-	    if(count != 0){
-	    phi = sfm_test.getPhi();
+	//iterate the camera parameters	    
+	if(count % 6 == 0){
+	    phi = sfm_test.getPhi(); 
 	    Lz = sfm_test.getLz();
-	    for(int j = 0; j<5 ;j++)
-		((Reconstruct3d*) Force)->updateCamera(phi,Lz);}	    
-
+	    for(int j = 0; j<3 ;j++)
+		((Reconstruct3d*) Force)->updateCamera(phi,Lz);
+	}	    
+	
+	if(count % 15 == 0){
 	    //display the cameras view with the sillhouette curve of the surface
 	    for(int k = 0;k<24;k++){
 		    ((Reconstruct3d*)Force)->getCameras()[k].computeSilhouette();
