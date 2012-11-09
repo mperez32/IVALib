@@ -100,7 +100,7 @@ int main(int argc, char **argv){
 
   
 
-/*  //show the image
+  //show the image
   namedWindow( "Camera 1 window", CV_WINDOW_AUTOSIZE );// Create a window for display.
   namedWindow( "Camera 2 window", CV_WINDOW_AUTOSIZE );// Create a window for display.
   namedWindow( "Camera 3 window", CV_WINDOW_AUTOSIZE );// Create a window for display.
@@ -110,7 +110,7 @@ int main(int argc, char **argv){
   imshow( "Camera 3 window", Cam3Img );
   imshow( "Camera 4 window", Cam4Img );
   waitKey(0);// Wait for a keystroke in the window
-*/
+
   //Obtain the occluding curve for each camera and make label map
   vector<Vec3i> Occ1 = Cam1.getOcc();
   vector<Vec3i> Occ2 = Cam2.getOcc();
@@ -146,7 +146,7 @@ int main(int argc, char **argv){
   for(i;i<Occ4.end();i++)
       Occ4label((*i)[0],(*i)[1],(*i)[2]) = 255;
 
-  /*//Show the Occluding Curves
+  //Show the Occluding Curves
   SurfaceWindow WOcc1(Occ1label);
   WOcc1.run();
   SurfaceWindow WOcc2(Occ2label);
@@ -155,6 +155,6 @@ int main(int argc, char **argv){
   WOcc3.run();
   SurfaceWindow WOcc4(Occ4label);
   WOcc4.run();
-  */
+  
 
 }

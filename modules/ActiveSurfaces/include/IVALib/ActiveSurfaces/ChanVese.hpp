@@ -209,9 +209,9 @@ private:
       if(this->channels == 1)
 	ener_chanve = kappa + (pow(Img->ptr<T>((*i)[0])[(*i)[1]]-means_in[0],2) - pow(Img->ptr<T>((*i)[0])[(*i)[1]]-means_out[0],2));
       else if(this->channels == 2){
-	ener_chanve = 0.8*kappa + 1*(pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[0]-means_in[0]),2) + pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[1]-means_in[1]),2) + pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[2]-means_in[2]),2) - (pow((this->Img->at<cv::Vec<T, 3> >((*i)[0],(*i)[1])[0]-means_out[0]),2) + pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[1]-means_out[1]),2) + pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[2]-means_out[2]),2)));      
+	ener_chanve = 0.8*kappa + 1.0/2*(pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[0]-means_in[0]),2) + pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[1]-means_in[1]),2) + pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[2]-means_in[2]),2) - (pow((this->Img->at<cv::Vec<T, 3> >((*i)[0],(*i)[1])[0]-means_out[0]),2) + pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[1]-means_out[1]),2) + pow((this->Img->at<cv::Vec<T,2> >((*i)[0],(*i)[1])[2]-means_out[2]),2)));      
       }else if(this->channels == 3){
-	ener_chanve = 0.8*kappa + 1*(pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[0]-means_in[0]),2) + pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[1]-means_in[1]),2) + pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[2]-means_in[2]),2) - (pow((this->Img->at<cv::Vec<T, 3> >((*i)[0],(*i)[1])[0]-means_out[0]),2) + pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[1]-means_out[1]),2) + pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[2]-means_out[2]),2)));
+	ener_chanve = 0.8*kappa + 1.0/3*(pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[0]-means_in[0]),2) + pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[1]-means_in[1]),2) + pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[2]-means_in[2]),2) - (pow((this->Img->at<cv::Vec<T, 3> >((*i)[0],(*i)[1])[0]-means_out[0]),2) + pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[1]-means_out[1]),2) + pow((this->Img->at<cv::Vec<T,3> >((*i)[0],(*i)[1])[2]-means_out[2]),2)));
       }
 
       this->setPointF(*i,ener_chanve);

@@ -28,12 +28,14 @@ public:
    *@param Cameras list of cameras that will be used to evolve the surface
    *@param labelMap labelMap of the initial surface that will be evolved
    */
-  Reconstruct3d(clist const &Cameras, arma::cube const &labelMap){
+  Reconstruct3d(clist const &Cameras, arma::cube const &labelMap,double dt=0.1):dt(dt){
     this->Cameras = Cameras;
     this->energy = arma::cube(labelMap.n_rows,labelMap.n_cols,labelMap.n_slices);
     this->label = new arma::cube(labelMap);
+    this->Lz = new std::vector<SFM_point<double> >(Cameras.front().getSurface().getLz());
     for(clist::iterator cam = this->Cameras.begin();cam<this->Cameras.end();cam++){
       cam->getSurface().setLabelMap(this->label);
+      cam->getSurface().setLz(this->Lz);
     }
   };
   /**
@@ -66,7 +68,7 @@ public:
    *updateCamera
    *Update all cameras in the camera list
    */
-  void updateCamera(arma::cube const &Phi3D);
+  void updateCamera(arma::cube const &Phi3D, std::vector<SFM_point<double> > const &Lz);
   
   /**
    *getCameras
@@ -99,7 +101,10 @@ private:
    *arma::cube pointer that contians the label map shared by all the cameras
    */
   arma::cube *label;
-
+  /**
+   *std::vector<SFM_point<double> > that keeps the zero level set of all the cameras in the system
+   */
+  std::vector<SFM_point<double> > *Lz;
   /**
    *computeEnergy
    *computes the energy gradient at each point and registers in the arma::cube energy

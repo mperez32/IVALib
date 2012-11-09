@@ -32,7 +32,7 @@ int main(int argc, char **argv){
   resize(_Img,_Img,Size(300,300));
   Mat_<double> Ball(_Img.size());
   Mat_<Vec3b> Img(_Img.clone());
-  functor<double> *KForce = new Bhattacharyya(_Img,256,0,255);//Initialize the functor
+/*  functor<double> *KForce = new Bhattacharyya(_Img,256,0,255);//Initialize the functor
   
 
   //create the circle label map for initilization
@@ -107,21 +107,29 @@ int main(int argc, char **argv){
   //show the image
   imshow( "Display window", Img );                 
   waitKey(0); 
-
+*/
   //Use active contour with ChanVese energy
   
-  Mat _Img2 = imread("surfer.jpg",-1);
-  resize(_Img2,_Img2,Size(300,300));
+  Mat _Img2_temp = imread("images/IMAG0022.JPG",-1);
+  if(! _Img2_temp.data )// Check for invalid input
+     {
+      cout <<  "Could not open or find the image" <<endl ;
+      return -1;
+    }
+
+  medianBlur( _Img2_temp, _Img2_temp, 9);
+  Mat _Img2 = _Img2_temp*3;  
+  //resize(_Img2,_Img2,Size(300,300),0,0,INTER_AREA);
   Mat_<Vec3b> Img2(_Img2.clone());  
-  delete KForce;
-  KForce = new ChanVese(_Img2);
-  
+//  delete KForce;
+  functor<double> *KForce = new ChanVese(_Img2);
+  Ball = Mat::zeros(_Img2.size(),CV_8UC1);
   //create the circle label map for initilization
-  for(int row = 0; row < _Img.rows;row++){
-    for(int collum = 0; collum < _Img.cols;collum++){
+  for(int row = 0; row < _Img2.rows;row++){
+    for(int collum = 0; collum < _Img2.cols;collum++){
       
-      double x  = (double)row -_Img.rows/2 -35;
-      double y  = (double)collum -_Img.cols/2 + 20;
+      double x  = (double)row -_Img2.rows/2 -35;
+      double y  = (double)collum -_Img2.cols/2 + 20;
       double dist  = sqrt(pow(x,2) + pow(y,2));
       if(dist < min(_Img.rows,_Img.cols)/6)
 	Ball(row,collum) = 1;
@@ -130,32 +138,26 @@ int main(int argc, char **argv){
     }//end row for loop
   }//end collum for loop
 
-  sfm_test = SFM<double>(Ball,KForce);
+  SFM<double>sfm_test(Ball,KForce);
   sfm_test.Initialize();
   //obtain the contour and draw it on the image
   L0 = sfm_test.getLz();
       
-  i = L0.begin();
+  typename vector<SFM_point<double> >::iterator i = L0.begin();
   for(i;i<L0.end();i++){
     Img2((*i)[0],(*i)[1]) =  Vec3b(0,0,255);
   }
-
-  if(! Img2.data )// Check for invalid input
-     {
-      cout <<  "Could not open or find the image" <<endl ;
-      return -1;
-    }
     
   imshow( "Display window", Img2 );// Show our image inside it.
   waitKey(0);// Wait for a keystroke in the window
 
   L0.clear();// Clear list of points representing the contour
-  count = 0;
+  int count = 0;
   cout<<"Start Iterating."<<endl;
   sfm_test.Update();
  
   
-  while(count < 1000){
+  while(count < 1400){
       sfm_test.Update();
       count++;     
       if(count%50 == 0){

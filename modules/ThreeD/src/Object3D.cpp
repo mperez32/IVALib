@@ -17,6 +17,8 @@ Object3D::Object3D(arma::cube const &labelMap){
     SFM_point<double> point(labelMap.n_rows,labelMap.n_cols,labelMap.n_slices);
     this->rot = cv::Matx<double,3,3>::eye();
     this->Center = this->cord +this->rot*cv::Vec3d(this->labelMap->n_cols/2.0,this->labelMap->n_rows/2.0,this->labelMap->n_slices/2.0)*scale;
+    this->Lz = new std::vector<SFM_point<double> >;
+
     //initializes the zero-level set
     for(int slice = 0; slice < this->labelMap->n_slices;slice++){
 	//run through rows
@@ -27,17 +29,17 @@ Object3D::Object3D(arma::cube const &labelMap){
 		point.set(row,collum,slice);           
 		if((*this->labelMap)(row,collum,slice) == 1){
 		    if(point.checkForward() && (*this->labelMap)(point[0] +1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBackward() && (*this->labelMap)(point[0] -1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkUp() && (*this->labelMap)(point[0],point[1]+1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkDown() && (*this->labelMap)(point[0],point[1]-1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkFSlice() && (*this->labelMap)(point[0],point[1],point[2]+1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBSlice() && (*this->labelMap)(point[0],point[1],point[2]-1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		}//end if checking labelMap(row,collum)
 	    }//end collum for loop
 	}//end row for loop
@@ -53,6 +55,7 @@ Object3D::Object3D(arma::cube const &labelMap, arma::cube const &Phi, double con
     SFM_point<double> point(labelMap.n_rows,labelMap.n_cols,labelMap.n_slices);
     this->rot = cv::Matx<double,3,3>::eye();
     this->Center = this->cord +this->rot*cv::Vec3d(this->labelMap->n_cols/2.0,this->labelMap->n_rows/2.0,this->labelMap->n_slices/2.0)*scale;
+    this->Lz = new std::vector<SFM_point<double> >;
     
     //initializes the zero-level set
     for(int slice = 0; slice < this->labelMap->n_slices;slice++){
@@ -64,17 +67,17 @@ Object3D::Object3D(arma::cube const &labelMap, arma::cube const &Phi, double con
 		point.set(row,collum,slice);           
 		if((*this->labelMap)(row,collum,slice) == 1){
 		    if(point.checkForward() && (*this->labelMap)(point[0] +1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBackward() && (*this->labelMap)(point[0] -1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkUp() && (*this->labelMap)(point[0],point[1]+1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkDown() && (*this->labelMap)(point[0],point[1]-1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkFSlice() && (*this->labelMap)(point[0],point[1],point[2]+1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBSlice() && (*this->labelMap)(point[0],point[1],point[2]-1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		}//end if checking labelMap(row,collum)
 	    }//end collum for loop
 	}//end row for loop
@@ -89,6 +92,7 @@ Object3D::Object3D(arma::cube  const &labelMap, arma::cube const &Phi, double co
     SFM_point<double> point(labelMap.n_rows,labelMap.n_cols,labelMap.n_slices);
     this->rot = cv::Matx<double,3,3>::eye();
     this->Center = this->cord +this->rot*cv::Vec3d(this->labelMap->n_cols/2.0,this->labelMap->n_rows/2.0,this->labelMap->n_slices/2.0)*scale;
+    this->Lz = new std::vector<SFM_point<double> >;
 
     //initializes the zero-level set
     for(int slice = 0; slice < this->labelMap->n_slices;slice++){
@@ -100,17 +104,17 @@ Object3D::Object3D(arma::cube  const &labelMap, arma::cube const &Phi, double co
 		point.set(row,collum,slice);           
 		if((*this->labelMap)(row,collum,slice) == 1){
 		    if(point.checkForward() && (*this->labelMap)(point[0] +1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBackward() && (*this->labelMap)(point[0] -1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkUp() && (*this->labelMap)(point[0],point[1]+1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkDown() && (*this->labelMap)(point[0],point[1]-1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkFSlice() && (*this->labelMap)(point[0],point[1],point[2]+1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBSlice() && (*this->labelMap)(point[0],point[1],point[2]-1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		}//end if checking labelMap(row,collum)
 	    }//end collum for loop
 	}//end row for loop
@@ -125,6 +129,7 @@ Object3D::Object3D(arma::cube  const &labelMap, double const &scale, cv::Vec3d c
     SFM_point<double> point(labelMap.n_rows,labelMap.n_cols,labelMap.n_slices);
     this->rot = cv::Matx<double,3,3>::eye();
     this->Center = this->cord +this->rot*cv::Vec3d(this->labelMap->n_cols/2.0,this->labelMap->n_rows/2.0,this->labelMap->n_slices/2.0)*scale;
+    this->Lz = new std::vector<SFM_point<double> >;
 
     //initializes the zero-level set
     for(int slice = 0; slice < this->labelMap->n_slices;slice++){
@@ -136,17 +141,17 @@ Object3D::Object3D(arma::cube  const &labelMap, double const &scale, cv::Vec3d c
 		point.set(row,collum,slice);           
 		if((*this->labelMap)(row,collum,slice) == 1){
 		    if(point.checkForward() && (*this->labelMap)(point[0] +1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBackward() && (*this->labelMap)(point[0] -1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkUp() && (*this->labelMap)(point[0],point[1]+1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkDown() && (*this->labelMap)(point[0],point[1]-1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkFSlice() && (*this->labelMap)(point[0],point[1],point[2]+1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBSlice() && (*this->labelMap)(point[0],point[1],point[2]-1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		}//end if checking labelMap(row,collum)
 	    }//end collum for loop
 	}//end row for loop
@@ -160,6 +165,7 @@ Object3D::Object3D(arma::cube  const &labelMap, double const &scale){
     SFM_point<double> point(labelMap.n_rows,labelMap.n_cols,labelMap.n_slices);
     this->rot = cv::Matx<double,3,3>::eye();
     this->Center = this->cord +this->rot*cv::Vec3d(this->labelMap->n_cols/2.0,this->labelMap->n_rows/2.0,this->labelMap->n_slices/2.0)*scale;
+    this->Lz = new std::vector<SFM_point<double> >;
 
     //initializes the zero-level set
     for(int slice = 0; slice < this->labelMap->n_slices;slice++){
@@ -171,17 +177,17 @@ Object3D::Object3D(arma::cube  const &labelMap, double const &scale){
 		point.set(row,collum,slice);           
 		if((*this->labelMap)(row,collum,slice) == 1){
 		    if(point.checkForward() && (*this->labelMap)(point[0] +1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBackward() && (*this->labelMap)(point[0] -1,point[1],point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkUp() && (*this->labelMap)(point[0],point[1]+1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkDown() && (*this->labelMap)(point[0],point[1]-1,point[2]) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkFSlice() && (*this->labelMap)(point[0],point[1],point[2]+1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		    else if(point.checkBSlice() && (*this->labelMap)(point[0],point[1],point[2]-1) == 0)
-			this->Lz.push_back(point);
+			this->Lz->push_back(point);
 		}//end if checking labelMap(row,collum)
 	    }//end collum for loop
 	}//end row for loop

@@ -118,8 +118,8 @@ public:
     Silhouette.clear();
     SFM_point<double> point(SurfImg.rows,SurfImg.cols);
     //find all the points that are on the edge of the image, project back and add those points to the end of the list Occ
-    for(int row=0;row<ProjImg.rows;row++){
-      for(int col=0; col<ProjImg.cols;col++){
+    for(int row=0;row<SurfImg.rows;row++){
+      for(int col=0; col<SurfImg.cols;col++){
 	if(this->SurfImg.at<uchar>(row,col) == 1){
 	  point.set(row,col);
 	  if(point.checkForward() && this->SurfImg.at<uchar>(row+1,col) == 0){
@@ -280,6 +280,7 @@ public:
 
   inline ProjPlane const &getProjImg() const { return ProjImg;};
 
+
   /**
    *ProjectOccPoint
    *Project the value of a point on to the SurfImg and ProjImg
@@ -405,6 +406,7 @@ public:
    */
   inline void rotateCamera(cv::Matx<double,3,3> const &R){
     rot = R;
+    Surface.setCenter(rot.t()*(SurfCenter - cord));        
     Surface.setRot(rot.t());
   }
   /**
@@ -417,6 +419,7 @@ public:
     Vec3d Naxis = axis/norm(axis);
     Matx<double,3,3> R = Matx<double,3,3>::eye() + sin(zeta)*Matx<double,3,3>(0,-Naxis[2],Naxis[1],Naxis[2],0,-Naxis[0],-Naxis[1],Naxis[0],0) + (1-cos(zeta))*(Naxis*Naxis.t() - Matx<double,3,3>::eye());
     rot = R;
+    Surface.setCenter(rot.t()*(SurfCenter - cord));    
     Surface.setRot(rot.t());
   }
 

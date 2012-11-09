@@ -31,6 +31,7 @@ public:
   Object3D(){
     labelMap = NULL;
     Phi = NULL;
+    Lz = NULL;
   };
 
   /**
@@ -56,16 +57,14 @@ public:
   /**
    *Constructor
    *@param labelMap label map that represents the 3D object
-   *@param Phi sign distance function that represents the 3D object
-   *@param Scale sale that represents distance between each voxel
+   *@param scale sale that represents distance between each voxel
    *@param cord cordinates of the top left back corner of the lable map
    */
   Object3D(arma::cube  const &labelMap, double const &scale, cv::Vec3d const &cord);
   /**
    *Constructor
    *@param labelMap label map that represents the 3D object
-   *@param Phi sign distance function that represents the 3D object
-   *@param Scale sale that represents distance between each voxel
+   *@param scale sale that represents distance between each voxel
    */
   Object3D(arma::cube  const &labelMap, double const &scale);
 
@@ -83,9 +82,12 @@ public:
       this->Phi = new arma::cube(*Obj.Phi);
     else 
       this->Phi = NULL;
+    if(Obj.labelMap != NULL)
+      this->Lz = new std::vector<SFM_point<double> >(*Obj.Lz);
+    else
+      this->Lz = NULL;
     this->scale = Obj.scale;
     this->cord = Obj.cord;
-    this->Lz = Obj.Lz;
     this->rot = Obj.rot;
     this->Center = Obj.Center;
   }
@@ -100,18 +102,27 @@ public:
 	*temp_label = *Obj.labelMap;      
 	delete this->labelMap; 
 	this->labelMap = temp_label;}
-      else
-	this->labelMap = NULL;
+      else{
+	delete this->labelMap; 
+	this->labelMap = NULL;}
       if(Obj.Phi != NULL){
 	arma::cube *temp_phi = new arma::cube;
 	*temp_phi = *Obj.Phi;
 	delete this->Phi;
 	this->Phi = temp_phi;}
-      else
-	this->Phi = NULL;
+      else{
+	delete this->Phi;
+	this->Phi = NULL;}
+      if(Obj.Lz != NULL){
+	std::vector<SFM_point<double> > *Lz_temp = new std::vector<SFM_point<double> >;
+	*Lz_temp = *Obj.Lz;
+	delete this->Lz;
+	this->Lz = Lz_temp;}
+      else{
+	delete this->Lz;
+	this->Lz = NULL;}
       this->scale = Obj.scale;
       this->cord = Obj.cord;
-      this->Lz = Obj.Lz;
       this->rot = Obj.rot;
       this->Center = Obj.Center;
     }
@@ -124,6 +135,7 @@ public:
   ~Object3D(){
     delete labelMap;
     delete Phi;
+    delete Lz;
   }
   /**
    *computeLz
@@ -131,7 +143,7 @@ public:
    */
   inline void computeLz(){
     if(this->labelMap != NULL){
-      this->Lz.clear();
+      this->Lz->clear();
       //initializes the zero-level set
       SFM_point<double> point(labelMap->n_rows,labelMap->n_cols,labelMap->n_slices);
       for(int slice = 0; slice < this->labelMap->n_slices;slice++){
@@ -143,17 +155,17 @@ public:
 	    point.set(row,collum,slice);           
 	    if((*this->labelMap)(row,collum,slice) == 1){
 	      if(point.checkForward() && (*this->labelMap)(point[0] +1,point[1],point[2]) == 0)
-		this->Lz.push_back(point);
+		this->Lz->push_back(point);
 	      else if(point.checkBackward() && (*this->labelMap)(point[0] -1,point[1],point[2]) == 0)
-		this->Lz.push_back(point);
+		this->Lz->push_back(point);
 	      else if(point.checkUp() && (*this->labelMap)(point[0],point[1]+1,point[2]) == 0)
-		this->Lz.push_back(point);
+		this->Lz->push_back(point);
 	      else if(point.checkDown() && (*this->labelMap)(point[0],point[1]-1,point[2]) == 0)
-		this->Lz.push_back(point);
+		this->Lz->push_back(point);
 	      else if(point.checkFSlice() && (*this->labelMap)(point[0],point[1],point[2]+1) == 0)
-		this->Lz.push_back(point);
+		this->Lz->push_back(point);
 	      else if(point.checkBSlice() && (*this->labelMap)(point[0],point[1],point[2]-1) == 0)
-		this->Lz.push_back(point);
+		this->Lz->push_back(point);
 	    }//end if checking labelMap(row,collum)
 	  }//end collum for loop
 	}//end row for loop
@@ -216,9 +228,9 @@ public:
    *getLz
    *Function that returns Lz 
    */
-  inline plist & getLz(){return this->Lz;};
+  inline plist & getLz(){return *this->Lz;};
 
-  inline plist const & getLz() const {return this->Lz;};
+  inline plist const & getLz() const {return *this->Lz;};
   /**
    *getCenter
    *Returns the center of the object3d in a cv::Vec3d
@@ -245,8 +257,21 @@ public:
     this->cord = center_cord -(this->rot*center)*scale;
   };
   /**
+   *SetLz
+   *Set the zero level set with a pointer (Only use this if you know what you are doing)
+   *The zero level set is set but the label map will not change. Therefore if you do not change 
+   *the label map appropriatly, the next you compute Lz you might get undesired results.
+   *@param  Lz std::vector<SFM_point<double> > pointer that will be set as the new pointer.
+   */
+  inline void setLz(std::vector<SFM_point<double> > *Lz){
+    if(this->Lz != Lz){
+    delete this->Lz;
+    this->Lz = Lz;}
+  }
+  /**
    *setLabelMap
-   *Sets a new labelmap and definds the surface region. All other regional parameters are mantained 
+   *Sets a new labelmap. All other regional parameters are mantained.
+   *(WARNING) Does not recompute the Lz zero level set. Run computeLz if you need to use the zero level set for the new .
    *@param arma::cube that represents the new label map
    */
   inline void setLabelMap(arma::cube &label){
@@ -255,75 +280,24 @@ public:
     if(this->Phi != NULL)
       delete this->Phi;
     this->Phi = NULL;
-    this->Lz.clear();
-    //initializes the zero-level set
-    SFM_point<double> point(label.n_rows,label.n_cols,label.n_slices);
-    for(int slice = 0; slice < this->labelMap->n_slices;slice++){
-	//run through rows
-	for(int row = 0; row < this->labelMap->n_rows; row++){
-	    //next run through collums 
-	    for(int collum =0; collum < this->labelMap->n_cols;collum++){
-		//check to see if the point is in the zero levelset
-		point.set(row,collum,slice);           
-		if((*this->labelMap)(row,collum,slice) == 1){
-		    if(point.checkForward() && (*this->labelMap)(point[0] +1,point[1],point[2]) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkBackward() && (*this->labelMap)(point[0] -1,point[1],point[2]) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkUp() && (*this->labelMap)(point[0],point[1]+1,point[2]) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkDown() && (*this->labelMap)(point[0],point[1]-1,point[2]) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkFSlice() && (*this->labelMap)(point[0],point[1],point[2]+1) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkBSlice() && (*this->labelMap)(point[0],point[1],point[2]-1) == 0)
-		      this->Lz.push_back(point);
-		}//end if checking labelMap(row,collum)
-	    }//end collum for loop
-	}//end row for loop
-    }//end slice for loop
   }
   
   /**
    *setLabelMap
-   *set the label map from a pointer (only use if you know what you are doing)
+   *set the label map from a pointer (only use if you know what you are doing). All other regional parameters are mantained.
+   *(WARNING) Does not recompute the Lz zero level set. Run computeLz if you need to use the zero level set for the new .
    *@param label arma::cube pointer that contains the new labelMap
    */
   inline void setLabelMap(arma::cube *label){
     //set the labelMap pointer
+    if(label != this->labelMap){
     if(this->labelMap != NULL)
       delete this->labelMap;
     this->labelMap = label;
     if(this->Phi != NULL){
       delete this->Phi;
       this->Phi = NULL;}
-    this->Lz.clear();
-    //initializes the zero-level set
-    SFM_point<double> point(label->n_rows,label->n_cols,label->n_slices);
-    for(int slice = 0; slice < this->labelMap->n_slices;slice++){
-	//run through rows
-	for(int row = 0; row < this->labelMap->n_rows; row++){
-	    //next run through collums 
-	    for(int collum =0; collum < this->labelMap->n_cols;collum++){
-		//check to see if the point is in the zero levelset
-		point.set(row,collum,slice);           
-		if((*this->labelMap)(row,collum,slice) == 1){
-		    if(point.checkForward() && (*this->labelMap)(point[0] +1,point[1],point[2]) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkBackward() && (*this->labelMap)(point[0] -1,point[1],point[2]) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkUp() && (*this->labelMap)(point[0],point[1]+1,point[2]) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkDown() && (*this->labelMap)(point[0],point[1]-1,point[2]) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkFSlice() && (*this->labelMap)(point[0],point[1],point[2]+1) == 0)
-		      this->Lz.push_back(point);
-		    else if(point.checkBSlice() && (*this->labelMap)(point[0],point[1],point[2]-1) == 0)
-		      this->Lz.push_back(point);
-		}//end if checking labelMap(row,collum)
-	    }//end collum for loop
-	}//end row for loop
-    }//end slice for loop
+    }
   }
   
   /**
@@ -421,7 +395,7 @@ private:
   /**
    *std::vector<SFM_Point<double> > representing the label map points of the surface
    */
-  std::vector<SFM_point<double> > Lz;
+  std::vector<SFM_point<double> > *Lz;
   /**
    *cv::Vec3d used to represent the center of the element in the workd frame
    */

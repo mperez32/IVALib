@@ -52,7 +52,7 @@ foreach(example_filename ${cpp_examples})
 endforeach()
 
 if (INSTALL_C_EXAMPLES AND NOT WIN32)
-  file(GLOB C_SAMPLES *.c *.cpp *.jpg *.png *.data makefile.*  *.dsp *.cmd )
+  file(GLOB C_SAMPLES *.c *.cpp *.jpg *.png *.data makefile.*  *.dsp *.cmd images/*.JPG)
   install(FILES ${C_SAMPLES}
           DESTINATION share/OpenCV/samples/cpp
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
