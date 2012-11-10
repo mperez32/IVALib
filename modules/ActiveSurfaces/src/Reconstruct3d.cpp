@@ -90,7 +90,7 @@ using namespace std;
       }
       
       //Compute curvuture at each point and sum it to the Energy cube and set it to F
-      R_ener =  this->energy((*i)[0],(*i)[1],(*i)[2]) + (dxx*(dy2+dz2)+dyy*(dx2+dz2)+dzz*(dx2+dy2)-2*dx*dy*dxy-2*dx*dz*dxz-2*dy*dz*dyz)/(dx2+dy2+dz2+.00000001);
+      R_ener =  this->energy((*i)[0],(*i)[1],(*i)[2]) + 0.8*(dxx*(dy2+dz2)+dyy*(dx2+dz2)+dzz*(dx2+dy2)-2*dx*dy*dxy-2*dx*dz*dxz-2*dy*dz*dyz)/(dx2+dy2+dz2+.00000001);
 
       this->setPointF(*i,R_ener);
       
@@ -172,13 +172,13 @@ inline void Reconstruct3d::computeEnergy(Camera &cam){
       vector<Vec2i >::iterator point2d = list.begin();
       if(Img.channels() == 1){
 	for(point2d; point2d < list.end();point2d++)
-	    ener = ener - (means_in[0]- means_out[0])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])); 
+	    ener = ener - (means_in[0]- means_out[0])*((Img.at<T>((*point2d)[0],(*point2d)[1])- means_in[0]) +(Img.at<T>((*point2d)[0],(*point2d)[1]) - means_out[0])); 
       }else if(Img.channels() == 2){
 	for(point2d; point2d < list.end();point2d++)
-	    ener = ener - 1.0/2*((means_in[0]- means_out[0])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])) + (means_in[1]- means_out[1])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1])));
+	    ener = ener - 1.0/2*((means_in[0]- means_out[0])*((Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[0]- means_in[0]) +(Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[0] - means_out[0])) + (means_in[1]- means_out[1])*((Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[1]- means_in[1]) +(Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[1] - means_out[1])));
       }else if(Img.channels() == 3){
 	for(point2d; point2d < list.end();point2d++)
-	    ener = ener - ((means_in[0]- means_out[0])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])) + (means_in[1]- means_out[1])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1])) + (means_in[2]- means_out[2])*((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[2]) +(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[2])));
+	    ener = ener - ((means_in[0]- means_out[0])*((Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[0] - means_in[0]) +(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[0] - means_out[0])) + (means_in[1]- means_out[1])*((Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[1]- means_in[1]) +(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[1] - means_out[1])) + (means_in[2]- means_out[2])*((Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[2]- means_in[2]) +(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[2] - means_out[2])));
       }else{
 	throw runtime_error("Sorry the Reconstruction functional does not take more than three channel images");
       }
@@ -319,13 +319,13 @@ inline void Reconstruct3d::computeCamEnergy(Camera &cam, arma::cube const &Phi3D
       vector<Vec2i >::iterator point2d = list.begin();
       if(Img.channels() == 1){
 	for(point2d; point2d < list.end();point2d++)
-	  p_ener = p_ener + ((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0])*(Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) - (Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])*(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])); 
+	  p_ener = p_ener + ((Img.at<T>((*point2d)[0],(*point2d)[1])- means_in[0])*(Img.at<T>((*point2d)[0],(*point2d)[1])- means_in[0]) - (Img.at<T>((*point2d)[0],(*point2d)[1]) - means_out[0])*(Img.at<T>((*point2d)[0],(*point2d)[1]) - means_out[0])); 
       }else if(Img.channels() == 2){
 	for(point2d; point2d < list.end();point2d++)
-	    p_ener = p_ener + 1.0/2*(((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0])*(Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) - (Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])*(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])) + ((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1])*(Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1]) - (Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1])*(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1])));
+	    p_ener = p_ener + 1.0/2*(((Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[0]- means_in[0])*(Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[0]- means_in[0]) - (Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[0] - means_out[0])*(Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[0] - means_out[0])) + ((Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[1]- means_in[1])*(Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[1]- means_in[1]) - (Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[1] - means_out[1])*(Img.at<Vec<T,2> >((*point2d)[0],(*point2d)[1])[1] - means_out[1])));
       }else if(Img.channels() == 3){
 	for(point2d; point2d < list.end();point2d++)
-	    p_ener = p_ener + 1.0/3*(((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0])*(Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[0]) - (Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])*(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[0])) + ((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1])*(Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[1]) - (Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1])*(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[1]))+ ((Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[2])*(Img.at<uchar>((*point2d)[0],(*point2d)[1])- means_in[2]) - (Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[2])*(Img.at<uchar>((*point2d)[0],(*point2d)[1]) - means_out[2]))); 
+	    p_ener = p_ener + 1.0/3*(((Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[0]- means_in[0])*(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[0]- means_in[0]) - (Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[0] - means_out[0])*(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[0] - means_out[0])) + ((Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[1]- means_in[1])*(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[1]- means_in[1]) - (Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[1] - means_out[1])*(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[1] - means_out[1]))+ ((Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[2]- means_in[2])*(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[2]- means_in[2]) - (Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[2] - means_out[2])*(Img.at<Vec<T,3> >((*point2d)[0],(*point2d)[1])[2] - means_out[2]))); 
       }else{
 	throw runtime_error("Sorry the Reconstruction functional does not take more than three channel images");
       }      
@@ -346,7 +346,7 @@ inline void Reconstruct3d::computeCamEnergy(Camera &cam, arma::cube const &Phi3D
     //Move the camera according to the gradient descent scheme
     dT = dT/(norm(dT)+1.0e-24);
     dg = dg/(norm(dg)+1.0e-24);
-    Matx<double,3,3> G = Matx<double,3,3>::eye() + sin(-dt*(CV_PI/80))*Matx<double,3,3>(0,-dg[2],dg[1],dg[2],0,-dg[0],-dg[1],dg[0],0) + (1-cos(-dt*(CV_PI/80)))*(dg*dg.t() - Matx<double,3,3>::eye());
+    Matx<double,3,3> G = Matx<double,3,3>::eye() + sin(-dt*(CV_PI/50))*Matx<double,3,3>(0,-dg[2],dg[1],dg[2],0,-dg[0],-dg[1],dg[0],0) + (1-cos(-dt*(CV_PI/50)))*(dg*dg.t() - Matx<double,3,3>::eye());
 
     cam.moveCamera((R*G).t(),(R*G).t()*((dt*dT) -cam.getSurface().getCenter()));
 }

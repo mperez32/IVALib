@@ -43,7 +43,7 @@ int main(int argc, char **argv){
 		y = (double) row - 75.0;
 		z = (double) slice - 22.5;
 		dist  = sqrt(pow((140.0/65)*x,2) + pow(y,2) + pow((140.0/40)*z,2));
-		if(dist <= 70)
+		if(dist <= 40)
 		    labelMap(row,collum,slice) = 1;
 	    }//end slice for loop
 	}//end collum for loop
@@ -57,6 +57,7 @@ int main(int argc, char **argv){
     vector<Camera> Cameras;
     Vec3d cord;
     Vec3d X(0,0,-30.5);
+    Vec3d T(0.5,0,0);
     Mat Img;
     Mat Img2;
     Mat Img3;
@@ -71,7 +72,7 @@ int main(int argc, char **argv){
 	filename <<"images/IMAG000"<<i<<".JPG";
 	Img = imread(filename.str(),-1);
 	medianBlur( Img, Img, 9);
-	//Img = Img*2;
+	Img = Img*2;
 	if(! Img.data ){
 	    cout <<  "Could not open or find the image" <<endl ;
 	    return -1;
@@ -80,7 +81,7 @@ int main(int argc, char **argv){
 	R = Rot(Vec3d(0,1,0),-CV_PI/12*(i-1));
 	cord = R*X;
 	Cameras.push_back(Camera(Surf,Img.clone(),CamMat));
-	Cameras[i-1].moveCamera(R,cord);
+	Cameras[i-1].moveCamera(R,cord-T);
 	filename.str("");
 	
     }
@@ -104,10 +105,6 @@ int main(int argc, char **argv){
     }
     plist sil;
     namedWindow( "Cameras", CV_WINDOW_AUTOSIZE );// Create a window for display.
-    /*namedWindow( "Cameras 1", CV_WINDOW_AUTOSIZE );// Create a window for display.
-    namedWindow( "Cameras 4", CV_WINDOW_AUTOSIZE );// Create a window for display.
-    namedWindow( "Cameras 6", CV_WINDOW_AUTOSIZE );// Create a window for display.
-    namedWindow( "Cameras 9", CV_WINDOW_AUTOSIZE );// Create a window for display.*/
 
     //Show images with silhouette
     for(int i=0;i<24;i++){
@@ -135,14 +132,14 @@ int main(int argc, char **argv){
     while(count < 1000){
 	sfm_test.Update();
 	//iterate the camera parameters	    
-	if(count % 6 == 0){
+	if(count % 20 == 0){
 	    phi = sfm_test.getPhi(); 
 	    Lz = sfm_test.getLz();
-	    for(int j = 0; j<3 ;j++)
+	    for(int j = 0; j<10 ;j++)
 		((Reconstruct3d*) Force)->updateCamera(phi,Lz);
 	}	    
 	
-	if(count % 15 == 0){
+	if(count % 40 == 0){
 	    //display the cameras view with the sillhouette curve of the surface
 	    for(int k = 0;k<24;k++){
 		    ((Reconstruct3d*)Force)->getCameras()[k].computeSilhouette();
@@ -207,11 +204,12 @@ int main(int argc, char **argv){
 		    out(row,col,slice) = 0;
 	    }
 	}
-    }
+     }
 
   
     SurfaceWindow plotter2(out);
     plotter2.run();
+
 
 
 }    
