@@ -36,7 +36,21 @@ public:
   /**
    *Default constructor
    */
-  SFM3D<T>(){};
+  SFM3D<T>(){
+    Phi = NULL;
+    Init = NULL;
+    Label = NULL;
+    Lz = NULL;
+    Lp1 =NULL;
+    Lp2 =NULL;
+    Ln1 =NULL;
+    Ln2 =NULL;
+    Sz =NULL;
+    Sn1 =NULL;
+    Sn2 =NULL;
+    Sp1 =NULL;
+    Sp2 =NULL;
+  };
   /**
    *Constructor with arma::Mat input as initialization mask
    *@param Mask the input mask used for initialization
@@ -54,7 +68,8 @@ public:
     this->Sn2 = new std::vector<SFM_point<T> >();
     this->Sp1 = new std::vector<SFM_point<T> >();
     this->Sp2 = new std::vector<SFM_point<T> >();
-    
+    Phi = NULL;
+    Label = NULL;
   };
   /**
    *Contructor with arma::Mat as input initialization mask and a pointer to a functor that computes the force
@@ -76,7 +91,8 @@ public:
     this->Sn2 = new std::vector<SFM_point<T> >();
     this->Sp1 = new std::vector<SFM_point<T> >();
     this->Sp2 = new std::vector<SFM_point<T> >();
-    
+    Phi = NULL;
+    Label = NULL;
   };
   /**
    *Constructor with cv::Mat as input initialization mask
@@ -95,7 +111,8 @@ public:
     this->Sn2 = new std::vector<SFM_point<T> >();
     this->Sp1 = new std::vector<SFM_point<T> >();
     this->Sp2 = new std::vector<SFM_point<T> >();
-    
+    Phi =NULL;
+    Label =NULL;
   };
   /**
    *Constructor with cv::Mat as input initialization mask and a pointer to a functor that computes the force
@@ -117,7 +134,25 @@ public:
     this->Sn2 = new std::vector<SFM_point<T> >();
     this->Sp1 = new std::vector<SFM_point<T> >();
     this->Sp2 = new std::vector<SFM_point<T> >();
+    Phi = NULL;
+    Label = NULL;
   };
+  
+  ~SFM3D(){
+    delete Label;
+    delete Phi;
+    delete Init;
+    delete Lz;
+    delete Lp1;
+    delete Lp2;
+    delete Ln1;
+    delete Ln2;
+    delete Sz;
+    delete Sp1;
+    delete Sp2;
+    delete Sn1;
+    delete Sn2;
+  }
   
   /**
    *Method used to obtain a copy of the Lz linked list

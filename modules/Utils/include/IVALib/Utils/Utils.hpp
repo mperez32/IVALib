@@ -132,8 +132,8 @@ inline void ivaCircle(cv::Vec2d const &center, double const &radius, cv::Size co
   int min_x,min_y,max_x,max_y,y,x,dx,dy;
   min_x = std::max((int) (center[0] -radius),0);
   min_y = std::max((int) (center[1] -radius),0);
-  max_x = std::min((int) (center[0] +radius),size.width-1);
-  max_y = std::min((int) (center[1] +radius),size.height-1);
+  max_x = std::min((int) (center[0] +radius),size.height-1);
+  max_y = std::min((int) (center[1] +radius),size.width-1);
   for(x =min_x; x<=max_x;x++){
     for(y = min_y; y<=max_y; y++){
       dx =(x-center[0]);

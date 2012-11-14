@@ -200,7 +200,7 @@ public:
     //get the list of Vec2i that are in the circle and set the image of the list of point =1 and push back the 3dpoint
     std::vector<cv::Vec2i > pointl;
     if(dist == 0){
-	if(u1[0] >= 0 && u1[0] < ProjImg.rows && u1[1] >= 0 && u1[1] < ProjImg.cols){ 
+	if(u1[0] >= 0 && u1[0] < SurfImg.rows && u1[1] >= 0 && u1[1] < SurfImg.cols){ 
 	  pointl.push_back((cv::Vec2i) u1);
 	}
     }
